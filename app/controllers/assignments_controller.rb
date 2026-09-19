@@ -6,5 +6,9 @@ class AssignmentsController < ApplicationController
 
     canvas = CanvasApi.new
     @assignments = canvas.assignments(@course_id)
+
+  rescue CanvasApi::CanvasError => e
+    @error = e.message
+    @assignments = []
   end
 end

@@ -4,8 +4,15 @@ require "json"
 class CanvasApi
   BASE_URL = "https://boisestatecanvas.instructure.com"
 
+  class CanvasError < StandardError
+  end
+
   def initialize
     @token = ENV["CANVAS_API_TOKEN"]
+
+    if @token.nil? || @token.empty?
+      raise CanvasError, "Canvas API token is missing. Check your .env file."
+    end
   end
 
   def courses
@@ -13,9 +20,9 @@ class CanvasApi
   end
 
   def assignments(course_id)
-  get_all_pages(
-    "#{BASE_URL}/api/v1/courses/#{course_id}/assignments"
-  )
+    get_all_pages(
+      "#{BASE_URL}/api/v1/courses/#{course_id}/assignments"
+    )
   end
 
   private
@@ -30,16 +37,21 @@ class CanvasApi
       request = Net::HTTP::Get.new(uri)
       request["Authorization"] = "Bearer #{@token}"
 
-      response = Net::HTTP.start(
-        uri.hostname,
-        uri.port,
-        use_ssl: true
-      ) do |http|
-        http.request(request)
+      begin
+        response = Net::HTTP.start(
+          uri.hostname,
+          uri.port,
+          use_ssl: true
+        ) do |http|
+          http.request(request)
+        end
+      rescue StandardError
+        raise CanvasError, "Unable to connect to Canvas. Please try again."
       end
 
       unless response.is_a?(Net::HTTPSuccess)
-        raise "Canvas API error: #{response.code}"
+        raise CanvasError,
+              "Canvas returned an error (#{response.code})."
       end
 
       results.concat(JSON.parse(response.body))

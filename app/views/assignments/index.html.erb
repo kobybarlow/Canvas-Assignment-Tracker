@@ -4,7 +4,14 @@
   <%= link_to "Back to Courses", root_path %>
 </p>
 
-<% if @assignments.empty? %>
+<% if @error %>
+
+  <p>
+    <strong>Error:</strong>
+    <%= @error %>
+  </p>
+
+<% elsif @assignments.empty? %>
 
   <p>No assignments found for this course.</p>
 
