@@ -1,0 +1,14 @@
+<h1>Canvas Assignment Tracker</h1>
+
+<p>Select a course to view its assignments.</p>
+
+<%= form_with url: assignments_path, method: :get do |form| %>
+
+  <%= form.label :course_id, "Course:" %>
+
+  <%= form.select :course_id,
+      @courses.map { |course| [course["name"], course["id"]] } %>
+
+  <%= form.submit "View Assignments" %>
+
+<% end %>

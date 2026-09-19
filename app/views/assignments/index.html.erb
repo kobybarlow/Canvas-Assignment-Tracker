@@ -1,0 +1,31 @@
+<h1>Assignments</h1>
+
+<p>
+  <%= link_to "Back to Courses", root_path %>
+</p>
+
+<% if @assignments.empty? %>
+
+  <p>No assignments found for this course.</p>
+
+<% else %>
+
+  <ul>
+    <% @assignments.each do |assignment| %>
+
+      <li>
+        <strong><%= assignment["name"] %></strong>
+
+        <% if assignment["due_at"] %>
+          -
+          Due:
+          <%= Time.parse(assignment["due_at"]).strftime("%B %d, %Y at %I:%M %p") %>
+        <% else %>
+          - No due date
+        <% end %>
+      </li>
+
+    <% end %>
+  </ul>
+
+<% end %>
